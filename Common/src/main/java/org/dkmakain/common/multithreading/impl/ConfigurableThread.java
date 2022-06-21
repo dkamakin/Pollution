@@ -4,7 +4,7 @@ package org.dkmakain.common.multithreading.impl;
 import java.time.Duration;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
-import org.dkmakain.common.event.EventHandler;
+import org.dkmakain.common.event.impl.EventHandler;
 import org.dkmakain.common.logger.Log;
 import org.dkmakain.common.multithreading.AfterRunEvent;
 import org.dkmakain.common.multithreading.IConfigurableThread;
@@ -71,17 +71,15 @@ public class ConfigurableThread implements IConfigurableThread {
     private void innerExecution() {
         config.getRunnable().run();
 
-        if (isIntervalConfigured()) {
-            afterRunHandler.notifyAll(() -> config.getInterval().get());
-        }
+        afterRunHandler.notifyAll(() -> new AfterRunArguments(getInterval()));
     }
 
-    private boolean isIntervalConfigured() {
-        return config.getInterval() != null;
+    private Duration getInterval() {
+        return config.getInterval() == null ? null : config.getInterval().get();
     }
 
-    public static CommonThreadBuilder builder() {
-        return new CommonThreadBuilder();
+    public static ConfigurableThreadBuilder builder() {
+        return new ConfigurableThreadBuilder();
     }
 
     private void setUpThread(ThreadConfig config) {
@@ -100,30 +98,30 @@ public class ConfigurableThread implements IConfigurableThread {
         LOGGER.exception("Exception caught", exception);
     }
 
-    public static class CommonThreadBuilder {
+    public static class ConfigurableThreadBuilder {
 
         private final ThreadConfig config;
 
-        private CommonThreadBuilder() {
+        private ConfigurableThreadBuilder() {
             this.config = new ThreadConfig();
         }
 
-        public CommonThreadBuilder setInterval(Supplier<Duration> interval) {
+        public ConfigurableThreadBuilder setInterval(Supplier<Duration> interval) {
             config.setInterval(interval);
             return this;
         }
 
-        public CommonThreadBuilder setRunnable(Runnable runnable) {
+        public ConfigurableThreadBuilder setRunnable(Runnable runnable) {
             config.setRunnable(runnable);
             return this;
         }
 
-        public CommonThreadBuilder setThreadName(String name) {
+        public ConfigurableThreadBuilder setThreadName(String name) {
             config.setName(name);
             return this;
         }
 
-        public CommonThreadBuilder setDaemon(Boolean isDaemon) {
+        public ConfigurableThreadBuilder setDaemon(Boolean isDaemon) {
             config.setDaemon(isDaemon);
             return this;
         }

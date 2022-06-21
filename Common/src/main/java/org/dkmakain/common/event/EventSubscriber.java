@@ -1,7 +1,7 @@
 package org.dkmakain.common.event;
 
-public abstract class EventSubscriber<T extends IEvent> {
+public interface EventSubscriber<T extends IEvent<?>> {
 
-    public abstract void process(T event);
+    void process(T event);
 
 }

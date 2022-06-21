@@ -4,7 +4,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
-import org.dkmakain.common.event.EventHandler;
+import org.dkmakain.common.event.impl.EventHandler;
 import org.dkmakain.common.event.EventSubscriber;
 import org.dkmakain.common.event.IEvent;
 import org.junit.jupiter.api.BeforeEach;
@@ -55,11 +55,15 @@ class EventHandlerTest {
         verify(testSubscriber, never()).process(testEvent);
     }
 
-    private static class TestEvent implements IEvent {
+    private static class TestEvent implements IEvent<Object> {
 
+        @Override
+        public Object getArguments() {
+            return null;
+        }
     }
 
-    private static class TestEventSubscriber extends EventSubscriber<TestEvent> {
+    private static class TestEventSubscriber implements EventSubscriber<TestEvent> {
 
         @Override
         public void process(TestEvent event) {

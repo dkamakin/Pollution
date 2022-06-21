@@ -6,28 +6,37 @@ import org.dkmakain.common.event.EventSubscriber;
 import org.dkmakain.common.exception.EventProcessingException;
 import org.dkmakain.common.logger.Log;
 import org.dkmakain.common.multithreading.AfterRunEvent;
+import org.dkmakain.common.utils.NullHandler;
 
-public class WaiterSubscriber extends EventSubscriber<AfterRunEvent> {
+public class WaiterSubscriber implements EventSubscriber<AfterRunEvent> {
 
     private static final Log LOGGER = Log.create(WaiterSubscriber.class);
 
     @Override
     public void process(AfterRunEvent event) {
         try {
-            awaitNextExecutionTime(event.get());
-        } catch (InterruptedException e) {
-            throw new EventProcessingException("Interrupted while waiting for a next cycle");
+            NullHandler.executeThrowingIfNotNull(event.getArguments().interval(), this::awaitNextExecutionTime);
+        } catch (InterruptedException e) { // NOSONAR rethrow
+            LOGGER.exception("Failed to wait", e);
+            throw new EventProcessingException("Exception while waiting for a next cycle");
         }
     }
 
     private void awaitNextExecutionTime(Duration timeout) throws InterruptedException {
-        Instant deadline = Instant.now().plus(timeout);
+        Instant now      = Instant.now();
+        Instant deadline = now.plus(timeout);
 
         LOGGER.information("Waiting for {}", timeout);
 
         synchronized (this) {
-            while (Instant.now().isBefore(deadline)) {
-                wait(timeout.toMillis());
+            while (now.isBefore(deadline)) {
+                long millisToDeadline = Duration.between(now, deadline).toMillis();
+
+                if (millisToDeadline > 0) {
+                    wait(millisToDeadline);
+                }
+
+                now = Instant.now();
             }
         }
 
