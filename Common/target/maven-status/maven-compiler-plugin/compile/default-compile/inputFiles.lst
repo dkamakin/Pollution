@@ -1,0 +1,17 @@
+C:\Users\kamakin\Documents\pollution\Common\src\main\java\org\dkmakain\common\runner\IRunner.java
+C:\Users\kamakin\Documents\pollution\Common\src\main\java\org\dkmakain\common\logger\Log.java
+C:\Users\kamakin\Documents\pollution\Common\src\main\java\org\dkmakain\common\injection\DependencyResolver.java
+C:\Users\kamakin\Documents\pollution\Common\src\main\java\org\dkmakain\common\runner\impl\ApplicationRunner.java
+C:\Users\kamakin\Documents\pollution\Common\src\main\java\org\dkmakain\common\exception\ApplicationStartException.java
+C:\Users\kamakin\Documents\pollution\Common\src\main\java\org\dkmakain\common\utils\NullHandler.java
+C:\Users\kamakin\Documents\pollution\Common\src\main\java\org\dkmakain\common\interfaces\ThrowingOperation.java
+C:\Users\kamakin\Documents\pollution\Common\src\main\java\org\dkmakain\common\runner\IApplicationRunner.java
+C:\Users\kamakin\Documents\pollution\Common\src\main\java\org\dkmakain\common\utils\Validator.java
+C:\Users\kamakin\Documents\pollution\Common\src\main\java\org\dkmakain\common\interfaces\Operation.java
+C:\Users\kamakin\Documents\pollution\Common\src\main\java\org\dkmakain\common\exception\CommonException.java
+C:\Users\kamakin\Documents\pollution\Common\src\main\java\org\dkmakain\common\thread\impl\ThreadConfig.java
+C:\Users\kamakin\Documents\pollution\Common\src\main\java\org\dkmakain\common\exception\NullArgumentException.java
+C:\Users\kamakin\Documents\pollution\Common\src\main\java\org\dkmakain\common\thread\impl\CommonThread.java
+C:\Users\kamakin\Documents\pollution\Common\src\main\java\org\dkmakain\common\utils\ExceptionHandler.java
+C:\Users\kamakin\Documents\pollution\Common\src\main\java\org\dkmakain\common\thread\ICommonThread.java
+C:\Users\kamakin\Documents\pollution\Common\src\main\java\org\dkmakain\common\exception\ErrorReason.java

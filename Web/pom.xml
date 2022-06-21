@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <artifactId>parent</artifactId>
+    <groupId>org.dkmakain.parent</groupId>
+    <version>${revision}</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+
+  <name>Pollution: Web</name>
+  <artifactId>Web</artifactId>
+  <groupId>org.dkamakin.web</groupId>
+  <packaging>jar</packaging>
+
+  <properties>
+    <jetty-server.version>11.0.9</jetty-server.version>
+  </properties>
+
+  <dependencies>
+    <!-- Jetty -->
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-server</artifactId>
+      <version>${jetty-server.version}</version>
+    </dependency>
+    <!-- Common library -->
+    <dependency>
+      <artifactId>Common</artifactId>
+      <groupId>org.dkmakain.common</groupId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
+
+</project>
