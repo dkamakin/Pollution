@@ -5,7 +5,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 import org.dkmakain.common.event.impl.EventHandler;
-import org.dkmakain.common.event.EventSubscriber;
+import org.dkmakain.common.event.IEventSubscriber;
 import org.dkmakain.common.event.IEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,8 +13,8 @@ import org.junit.jupiter.api.Test;
 class EventHandlerTest {
 
     EventHandler<TestEvent> target;
-    TestEventSubscriber     testSubscriber;
-    TestEventSubscriber     anotherSubscriber;
+    TestIEventSubscriber    testSubscriber;
+    TestIEventSubscriber    anotherSubscriber;
     TestEvent               testEvent;
 
     @BeforeEach
@@ -30,8 +30,8 @@ class EventHandlerTest {
     }
 
     public void setUpTestEventSubscribers() {
-        testSubscriber    = spy(new TestEventSubscriber());
-        anotherSubscriber = spy(new TestEventSubscriber());
+        testSubscriber    = spy(new TestIEventSubscriber());
+        anotherSubscriber = spy(new TestIEventSubscriber());
     }
 
     @Test
@@ -63,7 +63,7 @@ class EventHandlerTest {
         }
     }
 
-    private static class TestEventSubscriber implements EventSubscriber<TestEvent> {
+    private static class TestIEventSubscriber implements IEventSubscriber<TestEvent> {
 
         @Override
         public void process(TestEvent event) {

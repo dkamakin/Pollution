@@ -1,5 +1,6 @@
 package org.dkamakin.common.multithreading.impl;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
@@ -60,8 +61,6 @@ class ConfigurableThreadTest {
     void run_FirstRun_Running() {
         target.run();
 
-        assertTrue(target.isRunning());
-
         verify(runnable, timeout(Duration.ofMinutes(1).toMillis()).atLeast(1)).run();
     }
 
@@ -78,13 +77,36 @@ class ConfigurableThreadTest {
 
     @Test
     void run_WithInterval_KeepInterval() {
-        whenNeedToGetInterval(Duration.ofSeconds(30));
+        whenNeedToGetInterval(Duration.ofSeconds(10));
 
         target.run();
 
         assertTrue(target.isRunning());
 
-        verify(runnable, timeout(Duration.ofSeconds(80).toMillis()).times(2)).run();
+        verify(runnable, timeout(Duration.ofSeconds(25).toMillis()).times(2)).run();
+    }
+
+    @Test
+    void isRunning_RunStop_NotRunning() {
+        target.run();
+
+        assertTrue(target.isRunning());
+
+        target.stop();
+
+        assertFalse(target.isRunning());
+    }
+
+    @Test
+    void isRunning_NoActions_NotRunning() {
+        assertFalse(target.isRunning());
+    }
+
+    @Test
+    void isRunning_RunThread_Running() {
+        target.run();
+
+        assertTrue(target.isRunning());
     }
 
 }

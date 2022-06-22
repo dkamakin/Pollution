@@ -4,29 +4,29 @@ import com.google.common.collect.Sets;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.function.Consumer;
-import org.dkmakain.common.event.EventSubscriber;
+import org.dkmakain.common.event.IEventSubscriber;
 import org.dkmakain.common.event.IEvent;
 import org.dkmakain.common.event.IEventHandler;
 
 public class EventHandler<T extends IEvent<?>> implements IEventHandler<T> {
 
-    private final Collection<EventSubscriber<T>> subscribers;
+    private final Collection<IEventSubscriber<T>> subscribers;
 
     public EventHandler() {
         this(Collections.emptyList());
     }
 
-    public EventHandler(Collection<EventSubscriber<T>> subscribers) {
+    public EventHandler(Collection<IEventSubscriber<T>> subscribers) {
         this.subscribers = Sets.newConcurrentHashSet(subscribers);
     }
 
     @Override
-    public void subscribe(EventSubscriber<T> subscriber) {
+    public void subscribe(IEventSubscriber<T> subscriber) {
         subscribers.add(subscriber);
     }
 
     @Override
-    public void unsubscribe(EventSubscriber<T> subscriber) {
+    public void unsubscribe(IEventSubscriber<T> subscriber) {
         subscribers.remove(subscriber);
     }
 
@@ -35,7 +35,7 @@ public class EventHandler<T extends IEvent<?>> implements IEventHandler<T> {
         iterateAndExecute(subscriber -> subscriber.process(event));
     }
 
-    private void iterateAndExecute(Consumer<EventSubscriber<T>> action) {
+    private void iterateAndExecute(Consumer<IEventSubscriber<T>> action) {
         subscribers.forEach(action);
     }
 

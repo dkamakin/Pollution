@@ -10,12 +10,12 @@ import org.dkmakain.web.configuration.ServerType;
 import org.dkmakain.web.configuration.WebServerConfiguration;
 import org.dkmakain.web.configuration.WebServerConfigurationSupplier;
 import org.dkmakain.web.server.IInnerServer;
-import org.dkmakain.web.server.WebServer;
+import org.dkmakain.web.server.impl.WebServer;
 import org.dkmakain.web.server.resolver.IServerResolver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class WebServerTest {
+class WebServerTest {
 
     WebServer                      target;
     IServerResolver                resolver;

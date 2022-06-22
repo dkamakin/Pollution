@@ -4,9 +4,10 @@ package org.dkmakain.common.multithreading.impl;
 import java.time.Duration;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
+import org.dkmakain.common.event.IEventHandler;
 import org.dkmakain.common.event.impl.EventHandler;
 import org.dkmakain.common.logger.Log;
-import org.dkmakain.common.multithreading.AfterRunEvent;
+import org.dkmakain.common.multithreading.IAfterRunEvent;
 import org.dkmakain.common.multithreading.IConfigurableThread;
 import org.dkmakain.common.utils.ExceptionHandler;
 import org.dkmakain.common.utils.NullHandler;
@@ -15,10 +16,10 @@ public class ConfigurableThread implements IConfigurableThread {
 
     private static final Log LOGGER = Log.create(ConfigurableThread.class);
 
-    private       Thread                      thread;
-    private final AtomicBoolean               running;
-    private final ThreadConfig                config;
-    private       EventHandler<AfterRunEvent> afterRunHandler;
+    private       Thread                        thread;
+    private final AtomicBoolean                 running;
+    private final ThreadConfig                  config;
+    private       IEventHandler<IAfterRunEvent> afterRunHandler;
 
     private ConfigurableThread(ThreadConfig config) {
         this.running = new AtomicBoolean(false);
@@ -35,10 +36,8 @@ public class ConfigurableThread implements IConfigurableThread {
         }
 
         synchronized (this) {
-            if (!isRunning()) {
+            if (running.compareAndSet(false, true)) {
                 thread.start();
-
-                running.set(true);
 
                 LOGGER.information("Running thread, config: {}", config);
             }
@@ -47,7 +46,7 @@ public class ConfigurableThread implements IConfigurableThread {
 
     @Override
     public void stop() {
-        if (running.getAndSet(false)) {
+        if (running.compareAndSet(true, false)) {
             LOGGER.information("Stopping thread: {}", config.getName());
         }
     }
@@ -84,6 +83,7 @@ public class ConfigurableThread implements IConfigurableThread {
 
     private void setUpThread(ThreadConfig config) {
         thread = new Thread(this::execute);
+
         NullHandler.executeIfNotNull(config.getName(), name -> thread.setName(name));
         thread.setDaemon(NullHandler.orValue(config.isDaemon(), true));
     }

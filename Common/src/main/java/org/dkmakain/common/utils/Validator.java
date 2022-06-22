@@ -36,8 +36,8 @@ public class Validator {
             return value;
         }
 
-        public void thenThrow(Supplier<? extends RuntimeException> exceptionSupplier) {
-            thenThrow(exceptionSupplier.get());
+        public T thenThrow(Supplier<? extends RuntimeException> exceptionSupplier) {
+            return thenThrow(exceptionSupplier.get());
         }
 
     }

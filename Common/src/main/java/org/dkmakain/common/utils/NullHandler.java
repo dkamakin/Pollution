@@ -20,8 +20,8 @@ public class NullHandler {
         }
     }
 
-    public static <T, E extends Exception> void executeThrowingIfNotNull(T value,
-                                                                         ThrowingConsumer<T, E> action) throws E {
+    public static <T, E extends Exception> void executeThrowingOperationIfNotNull(T value,
+                                                                                  ThrowingConsumer<T, E> action) throws E {
         if (value != null) {
             action.accept(value);
         }

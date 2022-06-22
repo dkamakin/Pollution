@@ -5,11 +5,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.dkmakain.web.configuration.ServerType;
 import org.dkmakain.web.configuration.WebServerConfiguration;
 import org.dkmakain.web.server.jetty.JettyServer;
-import org.dkmakain.web.server.resolver.ServerResolver;
+import org.dkmakain.web.server.resolver.impl.ServerResolver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class ServerResolverTest {
+class ServerResolverTest {
 
     WebServerConfiguration configuration;
     ServerResolver         target;
@@ -26,7 +26,7 @@ public class ServerResolverTest {
     }
 
     @Test
-    public void resolve_JettyConfiguration_CorrectInstance() {
+    void resolve_JettyConfiguration_CorrectInstance() {
         configuration.type = ServerType.JETTY;
 
         assertEquals(JettyServer.class, target.resolve(configuration).getClass());
