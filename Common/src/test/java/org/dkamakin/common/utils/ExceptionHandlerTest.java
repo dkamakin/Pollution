@@ -6,8 +6,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 
 import java.util.function.Consumer;
-import org.dkmakain.common.exception.ApplicationStartException;
-import org.dkmakain.common.exception.NullArgumentException;
 import org.dkmakain.common.interfaces.ThrowingOperation;
 import org.dkmakain.common.utils.ExceptionHandler;
 import org.junit.jupiter.api.BeforeEach;
@@ -60,11 +58,11 @@ class ExceptionHandlerTest {
 
     @Test
     void performAndCatch_ThrowWrongException_NotConsumed() throws Throwable {
-        NullArgumentException exception = new NullArgumentException("");
+        RuntimeException exception = new RuntimeException();
 
         whenNeedToThrow(exception);
 
-        ExceptionHandler.performAndCatch(operation, consumer, ApplicationStartException.class);
+        ExceptionHandler.performAndCatch(operation, consumer, IllegalArgumentException.class);
 
         verify(operation).perform();
         verifyNoInteractions(consumer);
