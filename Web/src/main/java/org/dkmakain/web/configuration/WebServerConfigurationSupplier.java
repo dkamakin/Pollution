@@ -6,7 +6,13 @@ package org.dkmakain.web.configuration;
 
 public class WebServerConfigurationSupplier {
 
+    private static WebServerConfiguration configuration = initialize();
+
     public WebServerConfiguration get() {
+        return configuration;
+    }
+
+    private static WebServerConfiguration initialize() {
         var result = new WebServerConfiguration();
 
         result.type  = ServerType.JETTY;
@@ -15,7 +21,7 @@ public class WebServerConfigurationSupplier {
         return result;
     }
 
-    private JettyConfiguration configureJetty() {
+    private static JettyConfiguration configureJetty() {
         var result = new JettyConfiguration();
 
         result.port = 8080;

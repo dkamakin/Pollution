@@ -12,12 +12,12 @@ import java.time.Duration;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 import java.util.function.Supplier;
-import org.dkmakain.common.base.ConfigurationHolder;
+import org.dkmakain.common.base.ConfigurationSaver;
 import org.dkmakain.common.json.JsonUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class ConfigurationHolderTest {
+class ConfigurationSaverTest {
 
     private static class Data {
 
@@ -25,9 +25,9 @@ class ConfigurationHolderTest {
         public static final Integer NEW_VALUE = 2;
     }
 
-    Supplier<Configuration>            configurationSupplier;
-    Configuration                      configuration;
-    ConfigurationHolder<Configuration> target;
+    Supplier<Configuration> configurationSupplier;
+    Configuration           configuration;
+    ServiceTest             target;
 
     @BeforeEach
     public void setUp() {
@@ -35,7 +35,7 @@ class ConfigurationHolderTest {
 
         configurationSupplier = spy(new ConfigurationSupplier());
 
-        target = spy(new ConfigurationHolder<>(configurationSupplier));
+        target = spy(new ServiceTest(configurationSupplier));
     }
 
     public void setUpConfiguration() {
@@ -45,9 +45,18 @@ class ConfigurationHolderTest {
 
     @Test
     void checkConfig_FirstCall_UpdateConfigOnce() {
-        target.checkConfig();
+        Configuration currentConfig = target.someFunction();
 
-        Configuration currentConfig = target.getConfig();
+        verify(configurationSupplier).get();
+        verify(target).updateConfig();
+
+        assertEquals(configuration, currentConfig);
+    }
+
+    @Test
+    void checkConfig_CallTwiceSameConfig_UpdateConfigOnce() {
+        target.someFunction();
+        Configuration currentConfig = target.someFunction();
 
         verify(configurationSupplier, times(2)).get();
         verify(target).updateConfig();
@@ -56,30 +65,14 @@ class ConfigurationHolderTest {
     }
 
     @Test
-    void checkConfig_CallTwiceSameConfig_UpdateConfigOnce() {
-        target.checkConfig();
-
-        target.checkConfig();
-
-        Configuration currentConfig = target.getConfig();
-
-        verify(configurationSupplier, times(3)).get();
-        verify(target).updateConfig();
-
-        assertEquals(configuration, currentConfig);
-    }
-
-    @Test
-    void checkConfig_CallThenUpdateConfigThenCallAgain_UpdateConfigTwice() {
-        target.checkConfig();
+    void checkConfig_CallTwiceUpdateConfig_UpdateConfigTwice() {
+        target.someFunction();
 
         configuration.number = Data.NEW_VALUE;
 
-        target.checkConfig();
+        Configuration currentConfig = target.someFunction();
 
-        Configuration currentConfig = target.getConfig();
-
-        verify(configurationSupplier, times(5)).get();
+        verify(configurationSupplier, times(4)).get();
         verify(target, times(2)).updateConfig();
 
         assertEquals(configuration, currentConfig);
@@ -91,7 +84,7 @@ class ConfigurationHolderTest {
         CyclicBarrier cyclicBarrier      = new CyclicBarrier(countUsersPlusMain);
 
         for (int i = 0; i < countUsersPlusMain - 1; i++) {
-            new TestServiceUser<>(target, cyclicBarrier).start();
+            new TestServiceUser(target, cyclicBarrier).start();
         }
 
         cyclicBarrier.await();
@@ -100,12 +93,12 @@ class ConfigurationHolderTest {
     }
 
 
-    static class TestServiceUser<T> extends Thread {
+    static class TestServiceUser extends Thread {
 
-        ConfigurationHolder<T> target;
-        CyclicBarrier          cyclicBarrier;
+        ServiceTest   target;
+        CyclicBarrier cyclicBarrier;
 
-        TestServiceUser(ConfigurationHolder<T> target, CyclicBarrier cyclicBarrier) {
+        TestServiceUser(ServiceTest target, CyclicBarrier cyclicBarrier) {
             this.target        = target;
             this.cyclicBarrier = cyclicBarrier;
         }
@@ -115,10 +108,30 @@ class ConfigurationHolderTest {
             try {
                 cyclicBarrier.await();
 
-                target.checkConfig();
+                target.someFunction();
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+
+    }
+
+    private static class ServiceTest extends ConfigurationSaver<Configuration> {
+
+        protected ServiceTest(Supplier<Configuration> configSupplier) {
+            super(configSupplier);
+        }
+
+        public Configuration someFunction() {
+            checkConfig();
+
+            someLogic();
+
+            return currentConfiguration;
+        }
+
+        public void someLogic() {
+            System.out.println("Some job done..");
         }
 
     }
@@ -158,7 +171,7 @@ class ConfigurationHolderTest {
 
         @Override
         public Configuration get() {
-            return JsonUtils.clone(ConfigurationHolderTest.this.configuration);
+            return JsonUtils.clone(ConfigurationSaverTest.this.configuration);
         }
     }
 }

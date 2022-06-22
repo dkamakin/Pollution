@@ -2,8 +2,11 @@ package org.dkamakin.web.server;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import org.dkmakain.web.configuration.ServerType;
@@ -28,7 +31,7 @@ class WebServerTest {
         setUpResolver();
         setUpConfigurationSupplier();
 
-        target = new WebServer(configurationSupplier, resolver);
+        target = spy(new WebServer(configurationSupplier, resolver));
     }
 
     public void setUpServer() {
@@ -55,8 +58,18 @@ class WebServerTest {
         when(configurationSupplier.get()).thenReturn(configuration);
     }
 
+    public void whenNeedToAnswerIsRunnable(boolean result) {
+        when(server.isRunnable()).thenReturn(result);
+    }
+
+    public void whenNeedToAnswerIsStoppable(boolean result) {
+        when(server.isStoppable()).thenReturn(result);
+    }
+
     @Test
     void run_FirstRun_ResolveAndRun() {
+        whenNeedToAnswerIsRunnable(true);
+
         target.run();
 
         verify(resolver).resolve(configuration);
@@ -64,7 +77,19 @@ class WebServerTest {
     }
 
     @Test
+    void run_NotRunnable_NoAction() {
+        whenNeedToAnswerIsRunnable(false);
+
+        target.run();
+
+        verify(resolver).resolve(configuration);
+        verify(server, never()).run();
+    }
+
+    @Test
     void run_SecondRun_ResolveOnceStartTwice() {
+        whenNeedToAnswerIsRunnable(true);
+
         target.run();
         target.run();
 
@@ -74,6 +99,9 @@ class WebServerTest {
 
     @Test
     void run_NewConfigurationArrived_StopAndResolve() {
+        whenNeedToAnswerIsStoppable(true);
+        whenNeedToAnswerIsRunnable(true);
+
         target.run();
 
         WebServerConfiguration newConfig = new WebServerConfiguration();
@@ -88,6 +116,26 @@ class WebServerTest {
         verify(resolver).resolve(configuration);
         verify(server).stop();
         verify(server, times(2)).run();
+    }
+
+    @Test
+    void stop_NotStoppable_NoAction() {
+        whenNeedToAnswerIsStoppable(false);
+
+        target.stop();
+
+        verifyNoInteractions(server);
+    }
+
+    @Test
+    void stop_RunStop_Stopped() {
+        whenNeedToAnswerIsStoppable(true);
+        whenNeedToAnswerIsRunnable(true);
+
+        target.run();
+        target.stop();
+
+        verify(server).stop();
     }
 
 }

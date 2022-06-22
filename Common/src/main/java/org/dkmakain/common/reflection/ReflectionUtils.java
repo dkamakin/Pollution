@@ -18,7 +18,7 @@ public class ReflectionUtils {
         .put(Void.class, void.class)
         .build();
 
-    public static <T> T instantiateFromConstructorNoPrimitives(Class<T> aClass, Object... parameters)
+    public static <T> T instanceFromConstructorNoPrimitives(Class<T> aClass, Object... parameters)
         throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
 
         return aClass.getConstructor(getClasses(parameters)).newInstance(parameters);

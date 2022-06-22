@@ -3,7 +3,6 @@ package org.dkmakain.common.runner.impl;
 import io.activej.inject.module.AbstractModule;
 import java.util.Collection;
 import java.util.List;
-import org.dkmakain.common.exception.ApplicationStartException;
 import org.dkmakain.common.injection.impl.DependencyResolver;
 import org.dkmakain.common.logger.Log;
 import org.dkmakain.common.multithreading.impl.ConfigurableThread;
@@ -34,21 +33,23 @@ public class ApplicationRunner implements IApplicationRunner {
     }
 
     private void startApplication() {
-        try {
-            LOGGER.information("Starting {} as an application", starter.getSimpleName());
+        LOGGER.information("Starting {} as an application", starter.getSimpleName());
 
-            DependencyResolver.initialize(modules);
-            DependencyResolver.resolve(starter).run();
+        DependencyResolver.initialize(modules);
+        DependencyResolver.resolve(starter).run();
 
-            LOGGER.information("Application started successfully");
-        } catch (Exception e) {
-            LOGGER.exception("Failed to start", e, starter.getSimpleName());
-            throw new ApplicationStartException(starter, e);
-        }
+        LOGGER.information("Application started successfully");
     }
 
     @Override
     public void run() {
         thread.run();
+    }
+
+    @Override
+    public void stop() {
+        DependencyResolver.resolve(starter).stop();
+
+        thread.stop();
     }
 }

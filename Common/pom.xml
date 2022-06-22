@@ -19,7 +19,6 @@
     <activej-inject.version>5.2</activej-inject.version>
     <guava.version>31.1-jre</guava.version>
     <jackson.version>2.13.3</jackson.version>
-    <slf4j.version>1.7.36</slf4j.version>
   </properties>
 
   <dependencies>
@@ -40,17 +39,6 @@
       <groupId>io.activej</groupId>
       <artifactId>activej-inject</artifactId>
       <version>${activej-inject.version}</version>
-    </dependency>
-    <!-- Logger -->
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>${slf4j.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-simple</artifactId>
-      <version>${slf4j.version}</version>
     </dependency>
   </dependencies>
 </project>

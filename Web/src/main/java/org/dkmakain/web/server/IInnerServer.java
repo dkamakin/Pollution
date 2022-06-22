@@ -6,6 +6,8 @@ public interface IInnerServer extends IRunner {
 
     boolean isStoppable();
 
-    boolean isStartable();
+    boolean isRunnable();
+
+    void initialize();
 
 }

@@ -87,6 +87,18 @@ class ConfigurableThreadTest {
     }
 
     @Test
+    void run_ExceptionWithInterval_StopExecuting() {
+        whenNeedToGetInterval(Duration.ofSeconds(10));
+        whenNeedToThrowException(Exception::new);
+
+        target.run();
+
+        assertTrue(target.isRunning());
+
+        verify(runnable, timeout(Duration.ofSeconds(25).toMillis())).run();
+    }
+
+    @Test
     void isRunning_RunStop_NotRunning() {
         target.run();
 

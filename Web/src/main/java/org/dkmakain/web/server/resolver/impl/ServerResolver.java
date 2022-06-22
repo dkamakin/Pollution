@@ -12,8 +12,12 @@ public class ServerResolver implements IServerResolver {
     @Override
     public IInnerServer resolve(WebServerConfiguration configuration) {
         try {
-            return ReflectionUtils.instantiateFromConstructorNoPrimitives(SupportedServers.map(configuration.type),
-                                                                          configuration);
+            IInnerServer server = ReflectionUtils.instanceFromConstructorNoPrimitives(SupportedServers.map(configuration.type),
+                                                                                      configuration);
+
+            server.initialize();
+
+            return server;
         } catch (Exception e) {
             throw new ServerResolvingException(e.getMessage());
         }

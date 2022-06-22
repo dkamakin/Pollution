@@ -1,5 +1,6 @@
 package org.dkmakain.web.server.jetty;
 
+import com.google.common.base.MoreObjects;
 import org.dkmakain.common.logger.Log;
 import org.dkmakain.common.utils.ExceptionHandler;
 import org.dkmakain.web.configuration.WebServerConfiguration;
@@ -11,51 +12,32 @@ public class JettyServer implements IInnerServer {
 
     private static final Log LOGGER = Log.create(JettyServer.class);
 
-    private final    WebServerConfiguration configuration;
-    private volatile Server                 server;
+    private final WebServerConfiguration configuration;
+    private       Server                 server;
 
     public JettyServer(WebServerConfiguration configuration) {
         this.configuration = configuration;
     }
 
-    private void initialize() {
+    @Override
+    public void initialize() {
         LOGGER.information("Initializing Jetty, config: {}", configuration);
 
-        if (server == null) {
-            server = new Server();
-        } else {
-            stop();
-        }
+        server = new Server();
 
         LOGGER.information("Jetty server initialized");
     }
 
     @Override
     public void run() {
-        if (!isStartable()) {
-            return;
-        }
+        initialize();
 
-        synchronized (this) {
-            initialize();
-
-            LOGGER.information("Starting Jetty");
-
-            ExceptionHandler.performAndCatchAny(server::start, this::exceptionHandler);
-        }
+        ExceptionHandler.performAndCatchAny(server::start, this::exceptionHandler);
     }
 
     @Override
     public void stop() {
-        if (!isStoppable()) {
-            return;
-        }
-
-        synchronized (this) {
-            LOGGER.information("Stopping server");
-
-            ExceptionHandler.performAndCatchAny(server::stop, this::exceptionHandler);
-        }
+        ExceptionHandler.performAndCatchAny(server::stop, this::exceptionHandler);
     }
 
     @Override
@@ -64,14 +46,22 @@ public class JettyServer implements IInnerServer {
     }
 
     @Override
-    public boolean isStartable() {
-        return server == null || server.isStopped();
+    public boolean isRunnable() {
+        return server != null && server.isStopped();
     }
 
     private <E extends Exception> void exceptionHandler(E exception) {
         LOGGER.exception("Exception caught", exception);
 
-        throw new WebServerOperationException("Failed to perform an operation with Jetty server, message: %s",
+        throw new WebServerOperationException("Failed to perform an operation with Jetty server: %s",
                                               exception.getMessage());
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                          .add("configuration", configuration)
+                          .add("server", server)
+                          .toString();
     }
 }

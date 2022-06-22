@@ -10,28 +10,28 @@ class ReflectionUtilsTest {
 
     @Test
     void instantiateFromConstructorNoPrimitives_NoArgsConstructor_CorrectInstance() {
-        assertDoesNotThrow(() -> ReflectionUtils.instantiateFromConstructorNoPrimitives(TestClass.class));
+        assertDoesNotThrow(() -> ReflectionUtils.instanceFromConstructorNoPrimitives(TestClass.class));
     }
 
     @Test
     void instantiateFromConstructorNoPrimitives_PrimitiveArgConstructor_NoSuchMethodException() {
         assertThrows(NoSuchMethodException.class,
-                     () -> ReflectionUtils.instantiateFromConstructorNoPrimitives(TestClass.class,
-                                                                                  1));
+                     () -> ReflectionUtils.instanceFromConstructorNoPrimitives(TestClass.class,
+                                                                               1));
     }
 
     @Test
     void instantiateFromConstructorNoPrimitives_WrapperArgConstructor_CorrectInstance() {
-        assertDoesNotThrow(() -> ReflectionUtils.instantiateFromConstructorNoPrimitives(TestClass.class,
-                                                                                        1L));
+        assertDoesNotThrow(() -> ReflectionUtils.instanceFromConstructorNoPrimitives(TestClass.class,
+                                                                                     1L));
     }
 
     @Test
     void instantiateFromConstructorNoPrimitives_ManyArgsConstructor_CorrectInstance() {
-        assertDoesNotThrow(() -> ReflectionUtils.instantiateFromConstructorNoPrimitives(TestClass.class,
-                                                                                        "test",
-                                                                                        1,
-                                                                                        new byte[1]));
+        assertDoesNotThrow(() -> ReflectionUtils.instanceFromConstructorNoPrimitives(TestClass.class,
+                                                                                     "test",
+                                                                                     1,
+                                                                                     new byte[1]));
     }
 
     public static class TestClass {
