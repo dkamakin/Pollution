@@ -6,10 +6,10 @@ package org.dkmakain.web.configuration;
 
 public class WebServerConfigurationSupplier {
 
-    private static WebServerConfiguration configuration = initialize();
+    private static final WebServerConfiguration CONFIGURATION = initialize();
 
     public WebServerConfiguration get() {
-        return configuration;
+        return CONFIGURATION;
     }
 
     private static WebServerConfiguration initialize() {

@@ -30,17 +30,11 @@ public class ConfigurableThread implements IConfigurableThread {
     }
 
     @Override
-    public void run() {
-        if (isRunning()) {
-            return;
-        }
+    public synchronized void run() {
+        if (running.compareAndSet(false, true)) {
+            LOGGER.information("Starting thread, config: {}", config);
 
-        synchronized (this) {
-            if (running.compareAndSet(false, true)) {
-                LOGGER.information("Starting thread, config: {}", config);
-
-                thread.start();
-            }
+            thread.start();
         }
     }
 
@@ -71,20 +65,12 @@ public class ConfigurableThread implements IConfigurableThread {
 
             config.getRunnable().run();
 
-            afterRunHandler.notifyAll(() -> new AfterRunArguments(getInterval()));
-
-            if (isNotPeriodic()) {
-                break;
-            }
+            afterRunHandler.notifyAll(() -> new AfterRunArguments(getInterval(), this));
         }
     }
 
     private Duration getInterval() {
         return config.getInterval() == null ? null : config.getInterval().get();
-    }
-
-    private boolean isNotPeriodic() {
-        return getInterval() == null;
     }
 
     public static ConfigurableThreadBuilder builder() {
@@ -102,6 +88,7 @@ public class ConfigurableThread implements IConfigurableThread {
         afterRunHandler = new EventHandler<>();
 
         afterRunHandler.subscribe(new WaiterSubscriber());
+        afterRunHandler.subscribe(new VerifierSubscriber());
     }
 
     private void exceptionHandler(Exception exception) {

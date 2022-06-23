@@ -16,8 +16,8 @@ public class WebServer extends ConfigurationSaver<WebServerConfiguration> implem
 
     private static final Log LOGGER = Log.create(WebServer.class);
 
-    private volatile IInnerServer    server;
-    private final    IServerResolver resolver;
+    private       IInnerServer    server;
+    private final IServerResolver resolver;
 
     @Inject
     public WebServer(final WebServerConfigurationSupplier configurationSupplier,
@@ -28,15 +28,15 @@ public class WebServer extends ConfigurationSaver<WebServerConfiguration> implem
     }
 
     @Override
-    public void run() {
+    public synchronized void run() {
         checkConfig();
 
-        doubleCheckedExecute(this::isRunnable, () -> server.run());
+        checkedExecution(this::isRunnable, () -> server.run());
     }
 
     @Override
-    public void stop() {
-        doubleCheckedExecute(this::isStoppable, () -> server.stop());
+    public synchronized void stop() {
+        checkedExecution(this::isStoppable, () -> server.stop());
     }
 
     @Override
@@ -50,13 +50,9 @@ public class WebServer extends ConfigurationSaver<WebServerConfiguration> implem
         LOGGER.information("Server resolved and initialized, instance: {}", server);
     }
 
-    private void doubleCheckedExecute(BooleanSupplier condition, Operation operation) {
+    private void checkedExecution(BooleanSupplier condition, Operation operation) {
         if (condition.getAsBoolean()) {
-            synchronized (this) {
-                if (condition.getAsBoolean()) {
-                    operation.perform();
-                }
-            }
+            operation.perform();
         }
     }
 

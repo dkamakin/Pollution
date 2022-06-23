@@ -3,6 +3,7 @@ package org.dkmakain.common.utils;
 import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import org.dkmakain.common.interfaces.Operation;
 
 public class Validator {
 
@@ -28,16 +29,28 @@ public class Validator {
             this.value     = value;
         }
 
-        public <E extends RuntimeException> T thenThrow(E exception) {
+        private void executeTrue(Operation operation) {
             if (Boolean.TRUE.equals(predicate.test(value))) {
-                throw exception;
+                operation.perform();
             }
+        }
+
+        public void thenExecute(Operation operation) {
+            executeTrue(operation);
+        }
+
+        public <E extends RuntimeException> T thenThrow(E exception) {
+            executeTrue(() -> thrower(exception));
 
             return value;
         }
 
         public T thenThrow(Supplier<? extends RuntimeException> exceptionSupplier) {
             return thenThrow(exceptionSupplier.get());
+        }
+
+        private <E extends RuntimeException> void thrower(E exception) {
+            throw exception;
         }
 
     }

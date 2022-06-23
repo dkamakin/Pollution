@@ -32,11 +32,15 @@ public class JettyServer implements IInnerServer {
     public void run() {
         initialize();
 
+        LOGGER.information("Starting Jetty server");
+
         ExceptionHandler.performAndCatchAny(server::start, this::exceptionHandler);
     }
 
     @Override
     public void stop() {
+        LOGGER.information("Stopping Jetty server");
+
         ExceptionHandler.performAndCatchAny(server::stop, this::exceptionHandler);
     }
 

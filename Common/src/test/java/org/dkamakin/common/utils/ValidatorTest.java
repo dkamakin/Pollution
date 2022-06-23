@@ -2,7 +2,11 @@ package org.dkamakin.common.utils;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 
+import org.dkmakain.common.interfaces.Operation;
 import org.dkmakain.common.utils.Validator;
 import org.junit.jupiter.api.Test;
 
@@ -39,6 +43,24 @@ class ValidatorTest {
     @Test
     void ifNullThenThrow_NotNull_NoException() {
         assertDoesNotThrow(() -> Validator.ifNull(new Object()).thenThrow(new RuntimeException()));
+    }
+
+    @Test
+    void ifNullThenExecute_NotNull_NotExecute() {
+        var operation = mock(Operation.class);
+
+        Validator.ifNull(new Object()).thenExecute(operation);
+
+        verifyNoInteractions(operation);
+    }
+
+    @Test
+    void ifNullThenExecute_Null_Execute() {
+        var operation = mock(Operation.class);
+
+        Validator.ifNull(null).thenExecute(operation);
+
+        verify(operation).perform();
     }
 
 }
