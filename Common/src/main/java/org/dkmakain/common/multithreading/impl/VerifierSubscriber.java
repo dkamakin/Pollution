@@ -8,10 +8,11 @@ public class VerifierSubscriber implements IEventSubscriber<IAfterRunEvent> {
 
     @Override
     public void process(IAfterRunEvent event) {
-        validatePeriodic(event);
+        validateIfPeriodic(event.getArguments().interval().isPresent(), event.getArguments().notifier());
     }
 
-    private void validatePeriodic(IAfterRunEvent event) {
-        Validator.ifNull(event.getArguments().interval()).thenExecute(() -> event.getArguments().notifier().stop());
+    private void validateIfPeriodic(boolean isDurationSupplied, ConfigurableThread notifier) {
+        Validator.ifFalse(isDurationSupplied).thenExecute(notifier::stop);
     }
+
 }

@@ -2,11 +2,11 @@ package org.dkmakain.common.multithreading.impl;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Optional;
 import org.dkmakain.common.event.IEventSubscriber;
 import org.dkmakain.common.exception.EventProcessingException;
 import org.dkmakain.common.logger.Log;
 import org.dkmakain.common.multithreading.IAfterRunEvent;
-import org.dkmakain.common.utils.NullHandler;
 
 public class WaiterSubscriber implements IEventSubscriber<IAfterRunEvent> {
 
@@ -15,8 +15,12 @@ public class WaiterSubscriber implements IEventSubscriber<IAfterRunEvent> {
     @Override
     public void process(IAfterRunEvent event) {
         try {
-            NullHandler.executeThrowingOperationIfNotNull(event.getArguments().interval(),
-                                                          this::awaitNextExecutionTime);
+            Optional<Duration> duration = event.getArguments().interval();
+
+            if (duration.isPresent()) {
+                awaitNextExecutionTime(duration.get());
+            }
+
         } catch (InterruptedException e) { // NOSONAR rethrow
             LOGGER.exception("Failed to wait", e);
             throw new EventProcessingException("Exception while waiting for a next cycle");

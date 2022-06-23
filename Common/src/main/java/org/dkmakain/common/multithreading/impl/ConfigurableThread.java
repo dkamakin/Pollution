@@ -2,6 +2,7 @@ package org.dkmakain.common.multithreading.impl;
 
 
 import java.time.Duration;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 import org.dkmakain.common.event.IEventHandler;
@@ -59,9 +60,9 @@ public class ConfigurableThread implements IConfigurableThread {
     }
 
     private void executeCycle() {
-        while (isRunning()) {
+        LOGGER.information("Thread started");
 
-            LOGGER.trace("Running task");
+        while (isRunning()) {
 
             config.getRunnable().run();
 
@@ -69,8 +70,9 @@ public class ConfigurableThread implements IConfigurableThread {
         }
     }
 
-    private Duration getInterval() {
-        return config.getInterval() == null ? null : config.getInterval().get();
+    private Optional<Duration> getInterval() {
+        Duration value = config.getInterval() == null ? null : config.getInterval().get();
+        return Optional.ofNullable(value);
     }
 
     public static ConfigurableThreadBuilder builder() {
