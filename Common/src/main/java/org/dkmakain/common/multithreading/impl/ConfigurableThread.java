@@ -31,7 +31,7 @@ public class ConfigurableThread implements IConfigurableThread {
     }
 
     @Override
-    public synchronized void run() {
+    public void run() {
         if (running.compareAndSet(false, true)) {
             LOGGER.information("Starting thread, config: {}", config);
 
