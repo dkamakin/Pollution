@@ -6,6 +6,7 @@ import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import java.time.Duration;
@@ -171,7 +172,11 @@ class ConfigurationSaverTest {
 
         @Override
         public Configuration get() {
-            return JsonUtils.clone(ConfigurationSaverTest.this.configuration);
+            try {
+                return JsonUtils.clone(ConfigurationSaverTest.this.configuration);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 }

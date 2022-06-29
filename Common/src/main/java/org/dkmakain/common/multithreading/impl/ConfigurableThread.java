@@ -71,8 +71,7 @@ public class ConfigurableThread implements IConfigurableThread {
     }
 
     private Optional<Duration> getInterval() {
-        Duration value = config.getInterval() == null ? null : config.getInterval().get();
-        return Optional.ofNullable(value);
+        return Optional.ofNullable(config.getInterval() == null ? null : config.getInterval().get());
     }
 
     public static ConfigurableThreadBuilder builder() {

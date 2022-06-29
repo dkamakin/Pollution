@@ -1,0 +1,8 @@
+{
+  "org.dkmakain.web.configuration.WebServerConfiguration": {
+    "jetty": {
+      "port": 8080
+    },
+    "type": "JETTY"
+  }
+}

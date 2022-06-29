@@ -1,20 +1,18 @@
 package org.dkmakain.common.json;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import org.dkmakain.common.exception.JsonProcessingException;
+import java.io.File;
+import java.io.IOException;
 
 public class JsonUtils {
-
-    public static class Constant {
-
-        public static final int MAX_STRING_LENGTH = 50;
-    }
 
     private static final ObjectMapper MAPPER = initMapper();
 
     private static ObjectMapper initMapper() {
-        ObjectMapper mapper = new ObjectMapper();
+        var mapper = new ObjectMapper();
 
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
@@ -25,37 +23,25 @@ public class JsonUtils {
         return MAPPER;
     }
 
-    public static <T> String serialize(T value) {
-        try {
-            return getMapper().writeValueAsString(value);
-        } catch (Exception e) {
-            throw new JsonProcessingException(e, "Failed to serialize object: %S", value);
-        }
+    public static JsonNode readTree(File file) throws IOException {
+        return getMapper().readTree(file);
     }
 
-    public static <T> T deserialize(String json, Class<T> aClass) {
-        try {
-            return getMapper().readValue(json, aClass);
-        } catch (Exception e) {
-            throw new JsonProcessingException(e, "Failed to deserialize json", normalizeString(json));
-        }
+    public static <T> String serialize(T value) throws JsonProcessingException {
+        return getMapper().writeValueAsString(value);
+    }
+
+    public static <T> T deserialize(String json, Class<T> aClass) throws JsonProcessingException {
+        return getMapper().readValue(json, aClass);
+    }
+
+    public static <T> T deserialize(JsonNode node, Class<T> type) throws JsonProcessingException {
+        return getMapper().treeToValue(node, type);
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> T clone(T value) {
-        try {
-            return (T) deserialize(serialize(value), value.getClass());
-        } catch (Exception e) {
-            throw new JsonProcessingException(e, "Failed to clone object: %S", value);
-        }
+    public static <T> T clone(T value) throws JsonProcessingException {
+        return (T) deserialize(serialize(value), value.getClass());
     }
 
-    private static String normalizeString(String string) {
-        return string.substring(0, getNormalizedLength(string));
-    }
-
-    private static int getNormalizedLength(String string) {
-        int stringLength = string.length();
-        return Math.min(stringLength, Constant.MAX_STRING_LENGTH);
-    }
 }

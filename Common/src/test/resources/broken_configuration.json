@@ -1,0 +1,10 @@
+{
+  "org.dkamakin.common.configuration.impl.TestConfiguration": {
+    "number": 10,
+    "string": "name"
+  },
+  "org.dkamakin.common.configuration.impl.TestConfigurationBROKEN!!": {
+    "number": 10,
+    "string": "name"
+  }
+}

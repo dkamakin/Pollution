@@ -9,9 +9,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
+import org.dkmakain.common.configuration.IConfigurationResolver;
+import org.dkmakain.web.configuration.JettyConfiguration;
 import org.dkmakain.web.configuration.ServerType;
 import org.dkmakain.web.configuration.WebServerConfiguration;
-import org.dkmakain.web.configuration.WebServerConfigurationSupplier;
 import org.dkmakain.web.server.IInnerServer;
 import org.dkmakain.web.server.impl.WebServer;
 import org.dkmakain.web.server.resolver.IServerResolver;
@@ -20,18 +21,18 @@ import org.junit.jupiter.api.Test;
 
 class WebServerTest {
 
-    WebServer                      target;
-    IServerResolver                resolver;
-    WebServerConfigurationSupplier configurationSupplier;
-    IInnerServer                   server;
-    WebServerConfiguration         configuration;
+    WebServer              target;
+    IServerResolver        resolver;
+    IInnerServer           server;
+    WebServerConfiguration configuration;
+    IConfigurationResolver configurationResolver;
 
     @BeforeEach
     public void setUp() {
         setUpResolver();
-        setUpConfigurationSupplier();
+        setUpConfigurationResolver();
 
-        target = spy(new WebServer(configurationSupplier, resolver));
+        target = spy(new WebServer(configurationResolver, resolver));
     }
 
     public void setUpServer() {
@@ -47,15 +48,15 @@ class WebServerTest {
     }
 
     public void setUpConfiguration() {
-        configuration = new WebServerConfiguration();
+        configuration = new WebServerConfiguration(new JettyConfiguration(8080), ServerType.JETTY);
     }
 
-    public void setUpConfigurationSupplier() {
+    public void setUpConfigurationResolver() {
         setUpConfiguration();
 
-        configurationSupplier = mock(WebServerConfigurationSupplier.class);
+        configurationResolver = mock(IConfigurationResolver.class);
 
-        when(configurationSupplier.get()).thenReturn(configuration);
+        when(configurationResolver.get(WebServerConfiguration.class)).thenReturn(configuration);
     }
 
     public void whenNeedToAnswerIsRunnable(boolean result) {
@@ -104,11 +105,9 @@ class WebServerTest {
 
         target.run();
 
-        WebServerConfiguration newConfig = new WebServerConfiguration();
+        WebServerConfiguration newConfig = new WebServerConfiguration(null, ServerType.JETTY);
 
-        newConfig.type = ServerType.JETTY;
-
-        when(configurationSupplier.get()).thenReturn(newConfig);
+        when(configurationResolver.get(WebServerConfiguration.class)).thenReturn(newConfig);
 
         target.run();
 

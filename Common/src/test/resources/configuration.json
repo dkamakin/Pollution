@@ -1,0 +1,6 @@
+{
+  "org.dkamakin.common.configuration.impl.TestConfiguration": {
+    "number": 10,
+    "string": "name"
+  }
+}

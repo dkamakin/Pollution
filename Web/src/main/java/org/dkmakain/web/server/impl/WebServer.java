@@ -4,10 +4,10 @@ import io.activej.inject.annotation.Inject;
 import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
 import org.dkmakain.common.base.ConfigurationSaver;
+import org.dkmakain.common.configuration.IConfigurationResolver;
 import org.dkmakain.common.interfaces.Operation;
 import org.dkmakain.common.logger.Log;
 import org.dkmakain.web.configuration.WebServerConfiguration;
-import org.dkmakain.web.configuration.WebServerConfigurationSupplier;
 import org.dkmakain.web.server.IInnerServer;
 import org.dkmakain.web.server.IWebServer;
 import org.dkmakain.web.server.resolver.IServerResolver;
@@ -20,9 +20,9 @@ public class WebServer extends ConfigurationSaver<WebServerConfiguration> implem
     private final IServerResolver resolver;
 
     @Inject
-    public WebServer(final WebServerConfigurationSupplier configurationSupplier,
+    public WebServer(final IConfigurationResolver configurationResolver,
                      final IServerResolver resolver) {
-        super(configurationSupplier::get);
+        super(() -> configurationResolver.get(WebServerConfiguration.class));
 
         this.resolver = resolver;
     }

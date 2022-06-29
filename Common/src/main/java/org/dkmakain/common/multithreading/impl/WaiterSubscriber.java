@@ -28,14 +28,14 @@ public class WaiterSubscriber implements IEventSubscriber<IAfterRunEvent> {
     }
 
     private void awaitNextExecutionTime(Duration timeout) throws InterruptedException {
-        Instant now      = Instant.now();
-        Instant deadline = now.plus(timeout);
+        var now      = Instant.now();
+        var deadline = now.plus(timeout);
 
         LOGGER.information("Waiting for {}", timeout);
 
         synchronized (this) {
             while (now.isBefore(deadline)) {
-                long millisToDeadline = Duration.between(now, deadline).toMillis();
+                var millisToDeadline = Duration.between(now, deadline).toMillis();
 
                 if (millisToDeadline > 0) {
                     wait(millisToDeadline);

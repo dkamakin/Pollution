@@ -2,6 +2,7 @@ package org.dkamakin.web.server.resolver;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.dkmakain.web.configuration.JettyConfiguration;
 import org.dkmakain.web.configuration.ServerType;
 import org.dkmakain.web.configuration.WebServerConfiguration;
 import org.dkmakain.web.server.jetty.JettyServer;
@@ -22,13 +23,11 @@ class ServerResolverTest {
     }
 
     public void setUpConfiguration() {
-        configuration = new WebServerConfiguration();
+        configuration = new WebServerConfiguration(new JettyConfiguration(8080), ServerType.JETTY);
     }
 
     @Test
     void resolve_JettyConfiguration_CorrectInstance() {
-        configuration.type = ServerType.JETTY;
-
         assertEquals(JettyServer.class, target.resolve(configuration).getClass());
     }
 

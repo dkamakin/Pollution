@@ -1,18 +1,14 @@
 package org.dkmakain.web.injection;
 
 import io.activej.inject.annotation.Provides;
+import org.dkmakain.common.configuration.IConfigurationResolver;
 import org.dkmakain.common.injection.impl.CommonModule;
-import org.dkmakain.web.configuration.WebServerConfigurationSupplier;
 import org.dkmakain.web.server.impl.WebServer;
 import org.dkmakain.web.server.resolver.IServerResolver;
 import org.dkmakain.web.server.resolver.impl.ServerResolver;
 
 public class WebModule extends CommonModule {
 
-    @Provides
-    WebServerConfigurationSupplier webServerConfiguration() {
-        return new WebServerConfigurationSupplier();
-    }
 
     @Provides
     IServerResolver serverResolver() {
@@ -20,9 +16,9 @@ public class WebModule extends CommonModule {
     }
 
     @Provides
-    WebServer webServer(WebServerConfigurationSupplier webServerConfigurationSupplier,
+    WebServer webServer(IConfigurationResolver configurationResolver,
                         IServerResolver resolver) {
-        return new WebServer(webServerConfigurationSupplier, resolver);
+        return new WebServer(configurationResolver, resolver);
     }
 
 }
