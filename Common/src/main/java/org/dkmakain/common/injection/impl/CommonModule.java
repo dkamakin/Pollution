@@ -7,7 +7,8 @@ import org.dkmakain.common.configuration.impl.ConfigurationResolver;
 
 public class CommonModule extends AbstractModule {
 
-    @Provides IConfigurationResolver configurationResolver() {
+    @Provides
+    IConfigurationResolver configurationResolver() {
         return new ConfigurationResolver();
     }
 

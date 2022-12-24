@@ -44,8 +44,7 @@ public class WebServerConfiguration {
         }
 
         WebServerConfiguration that = (WebServerConfiguration) o;
-        return Objects.equal(jetty, that.jetty) &&
-            type == that.type;
+        return Objects.equal(jetty, that.jetty) && type == that.type;
     }
 
     @Override

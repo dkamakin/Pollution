@@ -3,6 +3,7 @@ package org.dkmakain.common.runner.impl;
 import io.activej.inject.module.AbstractModule;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import org.dkmakain.common.configuration.IConfigurationResolver;
 import org.dkmakain.common.configuration.impl.ConfigurationLocator;
 import org.dkmakain.common.injection.impl.DependencyResolver;
@@ -10,7 +11,6 @@ import org.dkmakain.common.logger.Log;
 import org.dkmakain.common.multithreading.impl.ConfigurableThread;
 import org.dkmakain.common.runner.IApplicationRunner;
 import org.dkmakain.common.runner.IRunner;
-import org.dkmakain.common.utils.NullHandler;
 
 public class ApplicationRunner implements IApplicationRunner {
 
@@ -30,8 +30,16 @@ public class ApplicationRunner implements IApplicationRunner {
         this.configurationLocator = configurationLocator;
     }
 
-    public ApplicationRunner(Class<? extends IRunner> starter, AbstractModule... modules) {
-        this(starter, null, modules);
+    @Override
+    public void run() {
+        thread.run();
+    }
+
+    @Override
+    public void stop() {
+        DependencyResolver.resolve(starter).stop();
+
+        thread.stop();
     }
 
     private void setUpThread() {
@@ -47,24 +55,18 @@ public class ApplicationRunner implements IApplicationRunner {
 
         DependencyResolver.initialize(modules);
 
-        NullHandler.executeIfNotNull(configurationLocator,
-                                     locator -> DependencyResolver.resolve(IConfigurationResolver.class)
-                                                                  .initialize(locator));
+        locator().ifPresent(this::initializeConfiguration);
 
         DependencyResolver.resolve(starter).run();
 
         LOGGER.information("Application started successfully");
     }
 
-    @Override
-    public void run() {
-        thread.run();
+    private Optional<ConfigurationLocator> locator() {
+        return Optional.ofNullable(configurationLocator);
     }
 
-    @Override
-    public void stop() {
-        DependencyResolver.resolve(starter).stop();
-
-        thread.stop();
+    private void initializeConfiguration(ConfigurationLocator locator) {
+        DependencyResolver.resolve(IConfigurationResolver.class).initialize(locator);
     }
 }

@@ -45,7 +45,7 @@ public class TestConfiguration {
 
         TestConfiguration that = (TestConfiguration) o;
         return Objects.equal(number, that.number) &&
-            Objects.equal(string, that.string);
+               Objects.equal(string, that.string);
     }
 
     @Override

@@ -2,7 +2,6 @@ package org.dkmakain.common.multithreading.impl;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Optional;
 import org.dkmakain.common.event.IEventSubscriber;
 import org.dkmakain.common.exception.EventProcessingException;
 import org.dkmakain.common.logger.Log;
@@ -14,20 +13,20 @@ public class WaiterSubscriber implements IEventSubscriber<IAfterRunEvent> {
 
     @Override
     public void process(IAfterRunEvent event) {
+        event.getArguments().intervalOptional().ifPresent(this::awaitNextExecutionTime);
+    }
+
+    private void awaitNextExecutionTime(Duration timeout) {
         try {
-            Optional<Duration> duration = event.getArguments().interval();
-
-            if (duration.isPresent()) {
-                awaitNextExecutionTime(duration.get());
-            }
-
-        } catch (InterruptedException e) { // NOSONAR rethrow
+            wait(timeout);
+        } catch (InterruptedException e) {
             LOGGER.exception("Failed to wait", e);
+            Thread.currentThread().interrupt();
             throw new EventProcessingException("Exception while waiting for a next cycle");
         }
     }
 
-    private void awaitNextExecutionTime(Duration timeout) throws InterruptedException {
+    private void wait(Duration timeout) throws InterruptedException {
         var now      = Instant.now();
         var deadline = now.plus(timeout);
 

@@ -30,18 +30,17 @@ public class LocalConfigurationReader implements IConfigurationReader {
     }
 
     protected Configuration process(ConfigurationPosition position) throws IOException {
-        var      result = new Configuration();
-        JsonNode file   = JsonUtils.readTree(Path.of(position.path()).toFile());
-
-        var iterator = file.fields();
+        var configuration = new Configuration();
+        var file          = JsonUtils.readTree(Path.of(position.path()).toFile());
+        var iterator      = file.fields();
 
         while (iterator.hasNext()) {
             var entry = iterator.next();
 
-            safePut(entry.getKey(), entry.getValue(), result);
+            safePut(entry.getKey(), entry.getValue(), configuration);
         }
 
-        return result;
+        return configuration;
     }
 
     private ConfigurationValue getValue(JsonNode node, Class<?> aClass) throws JsonProcessingException {
@@ -50,7 +49,7 @@ public class LocalConfigurationReader implements IConfigurationReader {
 
     private void safePut(String className, JsonNode node, Configuration configuration) {
         try {
-            Class<?> aClass = Class.forName(className);
+            var aClass = Class.forName(className);
 
             configuration.put(aClass, getValue(node, aClass));
         } catch (Exception e) {

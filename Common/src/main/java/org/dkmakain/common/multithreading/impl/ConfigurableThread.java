@@ -2,7 +2,6 @@ package org.dkmakain.common.multithreading.impl;
 
 
 import java.time.Duration;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 import org.dkmakain.common.event.IEventHandler;
@@ -66,12 +65,8 @@ public class ConfigurableThread implements IConfigurableThread {
 
             config.getRunnable().run();
 
-            afterRunHandler.notifyAll(() -> new AfterRunArguments(getInterval(), this));
+            afterRunHandler.notifyAll(() -> new AfterRunArguments(config.supplyInterval().orElse(null), this));
         }
-    }
-
-    private Optional<Duration> getInterval() {
-        return Optional.ofNullable(config.getInterval() == null ? null : config.getInterval().get());
     }
 
     public static ConfigurableThreadBuilder builder() {
@@ -81,7 +76,7 @@ public class ConfigurableThread implements IConfigurableThread {
     private void setUpThread(ThreadConfig config) {
         thread = new Thread(this::execute);
 
-        NullHandler.executeIfNotNull(config.getName(), name -> thread.setName(name));
+        NullHandler.notNull(config.getName(), name -> thread.setName(name));
         thread.setDaemon(NullHandler.orValue(config.isDaemon(), true));
     }
 

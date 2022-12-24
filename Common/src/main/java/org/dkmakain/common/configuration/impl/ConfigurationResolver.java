@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.function.Function;
 import org.dkmakain.common.configuration.IConfigurationReader;
 import org.dkmakain.common.configuration.IConfigurationResolver;
+import org.dkmakain.common.exception.InternalServerException;
 
 public class ConfigurationResolver implements IConfigurationResolver {
 
@@ -17,7 +18,9 @@ public class ConfigurationResolver implements IConfigurationResolver {
 
     @Override
     public <T> T get(Class<T> aClass) {
-        return configuration.get(aClass);
+        return configuration.get(aClass)
+                            .orElseThrow(() -> new InternalServerException("Configuration for '%s' is not present",
+                                                                           aClass));
     }
 
     @Override

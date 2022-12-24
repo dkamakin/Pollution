@@ -6,9 +6,6 @@ import java.util.Collection;
 
 public class DependencyResolver {
 
-    private DependencyResolver() {
-    }
-
     private static Injector injector;
 
     public static void initialize(Collection<AbstractModule> modules) {

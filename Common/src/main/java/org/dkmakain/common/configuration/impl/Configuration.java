@@ -2,7 +2,7 @@ package org.dkmakain.common.configuration.impl;
 
 import com.google.common.collect.Maps;
 import java.util.Map;
-import java.util.function.Function;
+import java.util.Optional;
 
 public class Configuration {
 
@@ -12,8 +12,8 @@ public class Configuration {
         this.configurationMap = Maps.newConcurrentMap();
     }
 
-    public <T> T get(Class<T> aClass) {
-        return executeOrNull(aClass::cast, configurationMap.get(aClass));
+    public <T> Optional<T> get(Class<T> aClass) {
+        return value(aClass).map(ConfigurationValue::instance).map(aClass::cast);
     }
 
     public Map<Class<?>, ConfigurationValue> getConfigurationMap() {
@@ -24,12 +24,8 @@ public class Configuration {
         configurationMap.put(key, value);
     }
 
-    private <T> T executeOrNull(Function<Object, T> function, ConfigurationValue value) {
-        if (value == null) {
-            return null;
-        }
-
-        return function.apply(value.instance());
+    private Optional<ConfigurationValue> value(Class<?> aClass) {
+        return Optional.ofNullable(configurationMap.get(aClass));
     }
 
 }

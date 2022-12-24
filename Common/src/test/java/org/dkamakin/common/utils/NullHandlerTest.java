@@ -61,7 +61,7 @@ class NullHandlerTest {
     void executeIfNotNull_Null_NoExecution() {
         Consumer action = mock(Consumer.class);
 
-        NullHandler.executeIfNotNull(null, action);
+        NullHandler.notNull(null, action);
 
         verifyNoInteractions(action);
     }
@@ -71,7 +71,7 @@ class NullHandlerTest {
         Consumer action = mock(Consumer.class);
         String   value  = "value";
 
-        NullHandler.executeIfNotNull(value, action);
+        NullHandler.notNull(value, action);
 
         verify(action).accept(value);
     }

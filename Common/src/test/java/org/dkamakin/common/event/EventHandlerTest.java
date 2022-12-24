@@ -4,9 +4,9 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
-import org.dkmakain.common.event.impl.EventHandler;
-import org.dkmakain.common.event.IEventSubscriber;
 import org.dkmakain.common.event.IEvent;
+import org.dkmakain.common.event.IEventSubscriber;
+import org.dkmakain.common.event.impl.EventHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

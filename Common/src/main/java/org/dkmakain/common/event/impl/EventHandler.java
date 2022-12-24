@@ -3,10 +3,9 @@ package org.dkmakain.common.event.impl;
 import com.google.common.collect.Sets;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.function.Consumer;
-import org.dkmakain.common.event.IEventSubscriber;
 import org.dkmakain.common.event.IEvent;
 import org.dkmakain.common.event.IEventHandler;
+import org.dkmakain.common.event.IEventSubscriber;
 
 public class EventHandler<T extends IEvent<?>> implements IEventHandler<T> {
 
@@ -17,7 +16,7 @@ public class EventHandler<T extends IEvent<?>> implements IEventHandler<T> {
     }
 
     public EventHandler(Collection<IEventSubscriber<T>> subscribers) {
-        this.subscribers = Sets.newConcurrentHashSet(subscribers);
+        this.subscribers = Sets.newHashSet(subscribers);
     }
 
     @Override
@@ -32,11 +31,7 @@ public class EventHandler<T extends IEvent<?>> implements IEventHandler<T> {
 
     @Override
     public void notifyAll(T event) {
-        iterateAndExecute(subscriber -> subscriber.process(event));
-    }
-
-    private void iterateAndExecute(Consumer<IEventSubscriber<T>> action) {
-        subscribers.forEach(action);
+        subscribers.forEach(subscriber -> subscriber.process(event));
     }
 
 }

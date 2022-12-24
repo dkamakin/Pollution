@@ -1,10 +1,9 @@
 package org.dkamakin.common.configuration.impl;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
-import org.dkmakain.common.configuration.impl.Configuration;
 import org.dkmakain.common.configuration.impl.ConfigurationPosition;
 import org.dkmakain.common.configuration.impl.LocalConfigurationReader;
 import org.junit.jupiter.api.Test;
@@ -30,24 +29,24 @@ class LocalConfigurationReaderTest {
 
     @Test
     void read_CorrectConfiguration_ProvideInstance() throws URISyntaxException {
-        LocalConfigurationReader target        = createTarget(Data.CONFIGURATION_PATH);
-        Configuration            configuration = target.read();
+        var target        = createTarget(Data.CONFIGURATION_PATH);
+        var configuration = target.read();
+        var expected      = new TestConfiguration(10, "name");
 
-        var result = configuration.get(TestConfiguration.class);
+        var actual = configuration.get(TestConfiguration.class);
 
-        assertEquals(10, result.getNumber());
-        assertEquals("name", result.getString());
+        assertThat(actual).isPresent().contains(expected);
     }
 
     @Test
     void read_BrokenConfiguration_SkipAndDoNothing() throws URISyntaxException {
-        LocalConfigurationReader target        = createTarget(Data.BROKEN_CONFIGURATION_PATH);
-        Configuration            configuration = target.read();
+        var target        = createTarget(Data.BROKEN_CONFIGURATION_PATH);
+        var configuration = target.read();
+        var expected      = new TestConfiguration(10, "name");
 
-        var result = configuration.get(TestConfiguration.class);
+        var actual = configuration.get(TestConfiguration.class);
 
-        assertEquals(10, result.getNumber());
-        assertEquals("name", result.getString());
-        assertEquals(1, configuration.getConfigurationMap().size());
+        assertThat(actual).isPresent().contains(expected);
+        assertThat(configuration.getConfigurationMap()).hasSize(1);
     }
 }

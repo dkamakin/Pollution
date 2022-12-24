@@ -1,9 +1,7 @@
 package org.dkamakin.common.configuration.impl;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import org.dkmakain.common.configuration.impl.Configuration;
 import org.dkmakain.common.configuration.impl.ConfigurationValue;
@@ -21,7 +19,7 @@ class ConfigurationTest {
 
     @Test
     void size_NoConfiguration_Empty() {
-        assertEquals(0, target.getConfigurationMap().size());
+        assertThat(target.getConfigurationMap()).isEmpty();
     }
 
     @Test
@@ -30,32 +28,32 @@ class ConfigurationTest {
 
         target.put(instance.getClass(), new ConfigurationValue(instance));
 
-        assertEquals(1, target.getConfigurationMap().size());
+        assertThat(target.getConfigurationMap()).hasSize(1);
     }
 
     @Test
     void get_NotPresent_Null() {
-        assertNull(target.get(Configuration.class));
+        assertThat(target.get(Configuration.class)).isEmpty();
     }
 
     @Test
     void get_Present_CastAndReturn() {
-        Configuration instance = new Configuration();
+        var expected = new Configuration();
 
-        target.put(instance.getClass(), new ConfigurationValue(instance));
+        target.put(expected.getClass(), new ConfigurationValue(expected));
 
-        Configuration result = target.get(instance.getClass());
+        var actual = target.get(expected.getClass());
 
-        assertSame(instance, result);
+        assertThat(actual).isPresent().hasValueSatisfying(result -> assertThat(result).isEqualTo(expected));
     }
 
     @Test
     void get_WrongClass_ClassCastException() {
-        Configuration instance = new Configuration();
+        var instance = new Configuration();
 
         target.put(Integer.class, new ConfigurationValue(instance));
 
-        assertThrows(ClassCastException.class, () -> target.get(Integer.class));
+        assertThatThrownBy(() -> target.get(Integer.class)).isInstanceOf(ClassCastException.class);
     }
 
 }

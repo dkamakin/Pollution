@@ -3,6 +3,7 @@ package org.dkmakain.common.multithreading.impl;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import java.time.Duration;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 public class ThreadConfig {
@@ -14,6 +15,10 @@ public class ThreadConfig {
 
     public Supplier<Duration> getInterval() {
         return interval;
+    }
+
+    public Optional<Duration> supplyInterval() {
+        return Optional.ofNullable(getInterval()).map(Supplier::get);
     }
 
     public void setInterval(Supplier<Duration> interval) {
@@ -66,9 +71,9 @@ public class ThreadConfig {
 
         ThreadConfig that = (ThreadConfig) o;
         return Objects.equal(name, that.name) &&
-            Objects.equal(daemon, that.daemon) &&
-            Objects.equal(runnable, that.runnable) &&
-            Objects.equal(interval, that.interval);
+               Objects.equal(daemon, that.daemon) &&
+               Objects.equal(runnable, that.runnable) &&
+               Objects.equal(interval, that.interval);
     }
 
     @Override
